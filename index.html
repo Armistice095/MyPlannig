@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<!-- v2 : sauvegarde par téléchargement (index.html), mot de passe admin fixe -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mon planning hebdomadaire</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf9f5;--ink:#1f1e1d;--mute:#76746d;--line:#e9e6dc;--hl:#f1eee4;--dot:#c9c5b8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#262624;--ink:#ece9e1;--mute:#9a978e;--line:#3a3935;--hl:#30302d;--dot:#5a5852}}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*{box-sizing:border-box}
+html,body,.wrap,nav{scrollbar-width:none;-ms-overflow-style:none}
+html::-webkit-scrollbar,body::-webkit-scrollbar,.wrap::-webkit-scrollbar,nav::-webkit-scrollbar{display:none;width:0;height:0}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+main{width:100%;max-width:none;margin:0;padding:48px clamp(20px,5vw,80px) 64px}
+.top{text-align:center;font-weight:800;text-transform:uppercase;font-size:1.5rem;letter-spacing:.06em;margin:0 0 32px}
+h1{font-family:Newsreader,Georgia,"Times New Roman",serif;font-weight:500;font-size:3.2rem;letter-spacing:-.01em;margin:0 0 4px;line-height:1.1}
+.sub{color:var(--mute);margin:0 0 30px;font-size:1.15rem}
+nav{display:flex;gap:6px;margin-bottom:26px;border-bottom:1px solid var(--line);overflow-x:auto;overflow-y:hidden}
+nav button{border:0;background:none;color:var(--mute);font:inherit;font-size:1.1rem;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+nav button:focus-visible{outline:2px solid var(--ink);outline-offset:-2px;border-radius:4px}
+.wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:1.15rem}
+th{text-align:left;font-weight:400;color:var(--mute);font-size:.95rem;padding:0 16px 12px 0;border-bottom:1px solid var(--line)}
+td{padding:16px 16px 16px 0;border-bottom:1px solid var(--line);vertical-align:top}
+td.t{white-space:nowrap;color:var(--mute);font-variant-numeric:tabular-nums;width:14%;padding-right:22px}
+td.n{font-weight:500;width:38%}
+td.n:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--dot);margin-right:12px;vertical-align:2px}
+td.d{color:var(--mute);font-size:1.02rem}
+tr.k-etude td.n:before,tr.k-projet td.n:before,tr.k-culture td.n:before{background:var(--ink)}
+tr.k-pause td.n,tr.k-trajet td.n{font-weight:400;color:var(--mute)}
+tr.now{background:var(--hl)}
+tr.now td:first-child{box-shadow:inset 3px 0 0 var(--ink);padding-left:10px}
+.foot{margin-top:26px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--mute);font-size:.95rem}
+.foot button{border:0;background:none;color:inherit;font:inherit;cursor:pointer;text-decoration:underline;padding:0}
+@media(max-width:560px){table{font-size:1.05rem}td.t{width:auto}td.n{width:auto}h1{font-size:2.2rem}td.d{display:none}th:last-child{display:none}main{padding-top:30px}}
+
+td input,td select{font:inherit;color:inherit;background:transparent;border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
+td.t input{min-width:130px}
+.cell{display:flex;gap:6px}.cell select{width:auto}
+.cell button{border:0;background:none;color:var(--mute);font-size:1.3rem;cursor:pointer}
+body.ed td.d{display:table-cell}body.ed th:last-child{display:table-cell}body.ed main{padding-bottom:110px}
+#bar{position:fixed;left:0;right:0;bottom:0;display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;padding:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--line)}
+#bar span{color:var(--mute);font-size:.9rem}
+.b{font:inherit;background:var(--ink);color:var(--bg);border:0;border-radius:8px;padding:8px 16px;cursor:pointer}
+.b.g{background:none;color:var(--ink);border:1px solid var(--line)}
+#dlg{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:20px}
+#dlg>div{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:24px;max-width:380px;width:100%}
+#dlg h2{font-family:Newsreader,Georgia,serif;font-weight:500;margin:0 0 6px;font-size:1.5rem}
+#dlg p{color:var(--mute);margin:0 0 14px;font-size:.95rem}
+#dlg input{width:100%;font:inherit;padding:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);margin-bottom:10px}
+#dlg .row{display:flex;gap:8px;justify-content:flex-end}
+#msg{color:#b3402a;font-size:.88rem;min-height:1.2em;margin:0 0 8px}
+</style>
+</head>
+<body>
+<main>
+<header class="top">Mon planning hebdomadaire</header>
+<nav id="tabs" role="tablist"></nav>
+<div class="wrap"><table>
+<thead><tr><th>Horaire</th><th>Activité</th><th>Détails</th></tr></thead>
+<tbody id="tb"></tbody>
+</table></div>
+<div class="foot"><span id="exam"></span><span>Auteur : Armistice ANAGONOU</span><button id="admin">Admin</button></div>
+</main>
+<script type="application/json" id="data">{"pw": "8bca5765aff5a8a7481e56c9a0571025865c4fa8a953fca795bde01145181698", "salt": "9f3a1c7e5b2d4a60", "days": [[["5h15-5h45", "Réveil · prière", "base"], ["5h45-6h00", "Notions du jour", "etude", "Parcourir rapidement les notions des cours à venir."], ["6h00-6h35", "Préparation", "pause", "Douche, s'habiller."], ["6h35-7h00", "Marche vers la salle", "trajet", "Flashcards ou notes de la veille."], ["7h00-13h00", "Cours", "cours", "Théorie des graphes (7h-10h) · Anneaux et modules (10h-13h)"], ["13h00-13h25", "Trajet retour", "trajet", "Podcast ou cours ML en audio."], ["13h25-14h10", "Déjeuner · repos", "pause", "Sieste de 20 min possible."], ["14h10-15h25", "Études · Théorie des graphes", "etude", "Relire le cours du jour, puis exercices (50 min + 10 min de pause)."], ["15h25-15h40", "Pause", "pause"], ["15h40-16h55", "Études · Anneaux et modules", "etude", "Relire le cours du jour, puis exercices."], ["16h55-17h40", "Sport", "sport"], ["17h40-19h40", "Projet · Scoly", "projet", "Un objectif écrit avant de commencer, téléphone éteint."], ["19h40-20h30", "Dîner · douche", "pause"], ["20h30-21h15", "Culture générale", "culture"], ["21h15-22h15", "Détente · préparer demain", "pause"], ["22h15", "Prière · sommeil", "base"]], [["5h15-5h45", "Réveil · prière", "base"], ["5h45-6h00", "Notions du jour", "etude", "Parcourir rapidement les notions des cours à venir."], ["6h00-6h35", "Préparation", "pause", "Douche, s'habiller."], ["6h35-7h00", "Marche vers la salle", "trajet", "Flashcards ou notes de la veille."], ["7h00-13h00", "Cours", "cours", "Anneaux et modules (7h-10h) · Topologie (10h-13h)"], ["13h00-13h25", "Trajet retour", "trajet", "Podcast ou cours ML en audio."], ["13h25-14h10", "Déjeuner · repos", "pause", "Sieste de 20 min possible."], ["14h10-15h25", "Études · Anneaux et modules", "etude", "Relire le cours du jour, puis exercices (50 min + 10 min de pause)."], ["15h25-15h40", "Pause", "pause"], ["15h40-16h55", "Études · Topologie", "etude", "Relire le cours du jour, puis exercices."], ["16h55-17h40", "Marche · pause", "pause"], ["17h40-19h40", "Projet · ML / Deep Learning", "projet", "Un objectif écrit avant de commencer, téléphone éteint."], ["19h40-20h30", "Dîner · douche", "pause"], ["20h30-21h15", "Culture générale", "culture"], ["21h15-22h15", "Détente · préparer demain", "pause"], ["22h15", "Prière · sommeil", "base"]], [["5h15-5h45", "Réveil · prière", "base"], ["5h45-6h00", "Notions du jour", "etude", "Parcourir rapidement les notions des cours à venir."], ["6h00-6h35", "Préparation", "pause", "Douche, s'habiller."], ["6h35-7h00", "Marche vers la salle", "trajet", "Flashcards ou notes de la veille."], ["7h00-13h00", "Cours", "cours", "Topologie (7h-10h) · Théorie des graphes (10h-13h)"], ["13h00-13h25", "Trajet retour", "trajet", "Podcast ou cours ML en audio."], ["13h25-14h10", "Déjeuner · repos", "pause", "Sieste de 20 min possible."], ["14h10-15h25", "Études · Topologie", "etude", "Relire le cours du jour, puis exercices (50 min + 10 min de pause)."], ["15h25-15h40", "Pause", "pause"], ["15h40-16h55", "Études · Théorie des graphes", "etude", "Relire le cours du jour, puis exercices."], ["16h55-17h40", "Sport", "sport"], ["17h40-19h40", "Projet · Portfolio", "projet", "Un objectif écrit avant de commencer, téléphone éteint."], ["19h40-20h30", "Dîner · douche", "pause"], ["20h30-21h15", "Culture générale", "culture"], ["21h15-22h15", "Détente · préparer demain", "pause"], ["22h15", "Prière · sommeil", "base"]], [["5h15-5h45", "Réveil · prière", "base"], ["5h45-7h30", "Projet · ML / Deep Learning", "projet", "Ton meilleur créneau : un seul objectif, sans interruption."], ["7h30-8h00", "Petit-déjeuner", "pause"], ["8h00-9h15", "Études · Mesure et intégration", "etude", "Relire le dernier cours, puis exercices."], ["9h15-9h30", "Pause", "pause"], ["9h30-10h45", "Études · Interpolation polynomiale", "etude", "Relire le dernier cours, puis exercices."], ["10h45-11h30", "Sport", "sport"], ["11h30-12h00", "Déjeuner", "pause"], ["12h00-12h35", "Préparation", "pause", "Douche, s'habiller."], ["12h35-13h00", "Marche vers la salle", "trajet", "Flashcards ou notes."], ["13h00-19h00", "Cours", "cours", "Géométrie des courbes et surfaces (13h-16h) · Interpolation polynomiale (16h-19h)"], ["19h00-19h25", "Trajet retour", "trajet", "Podcast ou audio."], ["19h25-20h15", "Dîner · douche", "pause"], ["20h15-21h00", "Culture générale", "culture"], ["21h00-22h15", "Détente · préparer demain", "pause"], ["22h15", "Prière · sommeil", "base"]], [["5h15-5h45", "Réveil · prière", "base"], ["5h45-7h30", "Projet · Scoly", "projet", "Ton meilleur créneau : un seul objectif, sans interruption."], ["7h30-8h00", "Petit-déjeuner", "pause"], ["8h00-9h15", "Études · Géométrie des courbes et surfaces", "etude", "Relire le dernier cours, puis exercices."], ["9h15-9h30", "Pause", "pause"], ["9h30-10h45", "Études · Interpolation polynomiale", "etude", "Relire le dernier cours, puis exercices."], ["10h45-11h30", "Marche · pause", "pause"], ["11h30-12h00", "Déjeuner", "pause"], ["12h00-12h35", "Préparation", "pause", "Douche, s'habiller."], ["12h35-13h00", "Marche vers la salle", "trajet", "Flashcards ou notes."], ["13h00-19h00", "Cours", "cours", "Mesure et intégration (13h-16h) · Géométrie des courbes et surfaces (16h-19h)"], ["19h00-19h25", "Trajet retour", "trajet", "Podcast ou audio."], ["19h25-20h15", "Dîner · douche", "pause"], ["20h15-21h00", "Culture générale", "culture"], ["21h00-22h15", "Détente · préparer demain", "pause"], ["22h15", "Prière · sommeil", "base"]], [["5h15-5h45", "Réveil · prière", "base"], ["5h45-7h30", "Projet · Portfolio", "projet", "Ton meilleur créneau : un seul objectif, sans interruption."], ["7h30-8h00", "Petit-déjeuner", "pause"], ["8h00-9h15", "Études · Géométrie des courbes et surfaces", "etude", "Relire le dernier cours, puis exercices."], ["9h15-9h30", "Pause", "pause"], ["9h30-10h45", "Études · Mesure et intégration", "etude", "Relire le dernier cours, puis exercices."], ["10h45-11h30", "Sport", "sport"], ["11h30-12h00", "Déjeuner", "pause"], ["12h00-12h35", "Préparation", "pause", "Douche, s'habiller."], ["12h35-13h00", "Marche vers la salle", "trajet", "Flashcards ou notes."], ["13h00-19h00", "Cours", "cours", "Interpolation polynomiale (13h-16h) · Mesure et intégration (16h-19h)"], ["19h00-19h25", "Trajet retour", "trajet", "Podcast ou audio."], ["19h25-20h15", "Dîner · douche", "pause"], ["20h15-21h00", "Détente complète", "pause"], ["21h00-22h15", "Détente · préparer demain", "pause"], ["22h15", "Prière · sommeil", "base"]], [["6h30-7h30", "Réveil · prière · petit-déjeuner", "base"], ["8h00-9h00", "Bilan de la semaine et planning de la suivante", "base", "Ce qui a avancé, ce qui est en retard, 3 priorités par jour."], ["9h00-10h00", "Révisions espacées · toutes les matières", "etude", "Cours de la semaine (J+1, J+3, J+7, J+21)."], ["10h00-10h15", "Pause", "pause"], ["10h15-12h15", "Projet · Scoly", "projet", "Un objectif précis écrit avant de commencer."], ["12h15-20h00", "Temps libre", "pause", "Repos, famille, sport plaisir. Aucun travail."], ["20h00-21h00", "Culture générale", "culture", "Optionnel."], ["22h15", "Prière · sommeil", "base"]]]}</script>
+<script>
+const DATA=JSON.parse(document.getElementById("data").textContent);
+const J=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+const K={etude:"Études",projet:"Projet",culture:"Culture",sport:"Sport",cours:"Cours",trajet:"Trajet",pause:"Pause",base:"Base"};
+let adm=false;try{adm=sessionStorage.getItem("adm")==="1"}catch(e){}
+const today=(new Date().getDay()+6)%7;let cur=today;
+const $=id=>document.getElementById(id);
+const esc=v=>String(v==null?"":v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const mins=v=>{const m=/(\d+)h(\d*)/.exec(v);return m?+m[1]*60+(+m[2]||0):0};
+function isNow(r){if(cur!==today)return false;const n=new Date(),x=n.getHours()*60+n.getMinutes(),pr=String(r[0]).split("-");
+ if(pr.length<2)return false;return x>=mins(pr[0])&&x<mins(pr[1]);}
+function render(){
+ document.body.className=adm?"ed":"";
+ $("tabs").innerHTML=J.map((j,i)=>`<button role="tab" aria-selected="${i===cur}" data-i="${i}">${j}</button>`).join("");
+ const rows=DATA.days[cur];
+ $("tb").innerHTML=adm?rows.map((r,i)=>`<tr class="k-${r[2]}" data-r="${i}"><td class="t"><input data-f="0" value="${esc(r[0])}"></td><td class="n"><input data-f="1" value="${esc(r[1])}"></td><td class="d"><div class="cell"><input data-f="3" value="${esc(r[3])}"><select data-f="2">${Object.keys(K).map(k=>`<option value="${k}"${k===r[2]?" selected":""}>${K[k]}</option>`).join("")}</select><button data-del="${i}" aria-label="Supprimer la ligne">×</button></div></td></tr>`).join("")
+ :rows.map(r=>`<tr class="k-${r[2]}${isNow(r)?" now":""}"><td class="t">${esc(r[0])}</td><td class="n">${esc(r[1])}</td><td class="d">${esc(r[3])}</td></tr>`).join("");
+ const old=$("bar");if(old)old.remove();
+ if(adm){const b=document.createElement("div");b.id="bar";b.innerHTML='<button class="b g" id="add">Ajouter une ligne</button><button class="b" id="save">Enregistrer (télécharger)</button><button class="b g" id="quit">Quitter</button><span id="st"></span>';document.body.appendChild(b);}
+}
+document.addEventListener("input",e=>{const t=e.target,tr=t.closest&&t.closest("tr[data-r]");if(!tr)return;
+ DATA.days[cur][+tr.dataset.r][+t.dataset.f]=t.value;if(t.dataset.f==="2")tr.className="k-"+t.value;});
+async function sha(v){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(v));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}
+async function api(){return window.claude?await window.claude.use("artifact"):null;}
+async function persist(){
+ const c=document.documentElement.cloneNode(true);c.querySelector("#tb").innerHTML="";c.querySelector("#tabs").innerHTML="";
+ ["bar","dlg"].forEach(i=>{const n=c.querySelector("#"+i);if(n)n.remove()});c.querySelector("body").className="";
+ c.querySelector("#data").textContent=JSON.stringify(DATA).replace(/</g,"\\u003c");
+ const html="<!DOCTYPE html>\n"+c.outerHTML;
+ const dl=window.claude?await window.claude.use("downloads"):null;
+ if(dl){await dl.save({filename:"index.html",data:html});return;}
+ const u=URL.createObjectURL(new Blob([html],{type:"text/html"}));const l=document.createElement("a");l.href=u;l.download="index.html";document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);}
+function openDlg(){const first=!DATA.pw,d=document.createElement("div");d.id="dlg";
+ d.innerHTML=`<div role="dialog" aria-modal="true"><h2>${first?"Créer un mot de passe":"Espace admin"}</h2><p>${first?"Choisis un mot de passe (6 caractères minimum) pour modifier ton planning.":"Entre ton mot de passe pour modifier le planning."}</p><input type="password" id="pw" autocomplete="${first?"new-password":"current-password"}" placeholder="Mot de passe"><div id="msg"></div><div class="row"><button class="b g" id="no">Annuler</button><button class="b" id="ok">Valider</button></div></div>`;
+ document.body.appendChild(d);$("pw").focus();
+ const msg=t=>{$("msg").textContent=t};
+ const go=async()=>{const v=$("pw").value;
+  if(!(window.crypto&&crypto.subtle))return msg("Navigateur non compatible.");
+  if(first){if(v.length<6)return msg("6 caractères minimum.");
+   if(!(await api()))return msg("Enregistrement impossible : ouvre la page depuis ton compte.");
+   DATA.salt=[...crypto.getRandomValues(new Uint8Array(8))].map(x=>x.toString(16).padStart(2,"0")).join("");
+   DATA.pw=await sha(DATA.salt+v);try{sessionStorage.setItem("adm","1")}catch(e){}
+   try{await persist();}catch(e){DATA.pw="";msg("Enregistrement refusé : seul le propriétaire peut modifier cette page.");}return;}
+  if(await sha(DATA.salt+v)!==DATA.pw)return msg("Mot de passe incorrect.");
+  adm=true;try{sessionStorage.setItem("adm","1")}catch(e){}d.remove();render();};
+ $("ok").onclick=go;$("no").onclick=()=>d.remove();
+ $("pw").addEventListener("keydown",e=>{if(e.key==="Enter")go();if(e.key==="Escape")d.remove();});}
+document.addEventListener("click",async e=>{
+ const t=e.target.closest("[data-i]");if(t){cur=+t.dataset.i;render();return;}
+ const del=e.target.closest("[data-del]");if(del){DATA.days[cur].splice(+del.dataset.del,1);render();return;}
+ if(e.target.id==="admin"){adm?null:openDlg();}
+ if(e.target.id==="add"){DATA.days[cur].push(["","Nouvelle activité","pause",""]);render();window.scrollTo(0,document.body.scrollHeight);}
+ if(e.target.id==="quit"){adm=false;try{sessionStorage.removeItem("adm")}catch(x){}render();}
+ if(e.target.id==="save"){const st=$("st");st.textContent="Enregistrement…";
+  try{await persist();st.textContent="index.html téléchargé : remplace-le dans ton dépôt.";}catch(x){st.textContent="Échec du téléchargement.";}}
+});
+(function(){const d=Math.ceil((new Date(2027,0,15)-new Date())/864e5);
+ $("exam").textContent=d>0?"Examens à la mi-janvier : environ "+d+" jours.":"";})();
+render();setInterval(()=>{if(!adm)render()},60000);
+</script>
+</body>
+</html>
